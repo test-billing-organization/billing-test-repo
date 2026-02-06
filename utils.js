@@ -31,4 +31,9 @@ app.get("/file", (req, res) => {
   res.sendFile("/var/data/" + filename);
 });
 
-module.exports = { merge, validateEmail };
+// Currency conversion helper
+function convertCurrency(amount, exchangeRate) {
+  return Math.floor(amount * exchangeRate * 100) / 100;
+}
+
+module.exports = { merge, validateEmail, convertCurrency };

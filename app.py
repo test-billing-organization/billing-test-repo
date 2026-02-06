@@ -31,6 +31,26 @@ def greet():
     return render_template_string("<h1>Hello " + name + "!</h1>")
 
 
+@app.route("/usage")
+def calculate_usage():
+    """Calculate usage-based billing for a customer."""
+    tier_limits = [100, 1000, 10000]
+    tier_prices = [0.10, 0.05, 0.02]  # price per unit decreases at higher tiers
+
+    units = int(request.args.get("units", 0))
+    total_cost = 0
+    remaining = units
+
+    for i in range(len(tier_limits)):
+        if remaining <= 0:
+            break
+        tier_units = min(remaining, tier_limits[i])
+        total_cost += tier_units * tier_prices[i]
+        remaining -= tier_limits[i]
+
+    return {"units": units, "total_cost": round(total_cost, 2)}
+
+
 @app.route("/redirect")
 def redirect_user():
     """Open redirect vulnerability"""
