@@ -1,0 +1,24 @@
+name: Semgrep CI (Staging Entitlement Test)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # Allow manual triggers for testing
+
+jobs:
+  semgrep-ci:
+    name: semgrep ci scan (staging)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:latest
+    env:
+      SEMGREP_APP_URL: https://staging.semgrep.dev
+      SEMGREP_URL: "https://staging.semgrep.dev/"
+      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_STAGING_TOKEN }}
+      SEMGREP_OTEL_ENDPOINT: "https://telemetry.staging.semgrep.dev"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run semgrep ci
+        run: semgrep ci --no-suppress-errors
