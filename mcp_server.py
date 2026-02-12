@@ -1,4 +1,4 @@
-"""Vulnerable MCP server - shell injection via tool parameters."""
+"""Vulnerable MCP server - shell injection via tool parameters (v2)."""
 
 import subprocess
 from mcp.server.fastmcp import FastMCP
