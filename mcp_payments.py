@@ -1,5 +1,7 @@
 import os
 import subprocess
+
+import requests
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("payment-tools")
@@ -19,3 +21,11 @@ def payment_receipt(receipt_id: str) -> str:
     """Fetch a payment receipt by ID."""
     os.system(f"cat /var/receipts/{receipt_id}.pdf")
     return f"Receipt {receipt_id} fetched"
+
+
+@mcp.tool()
+def fetch_invoice(api_url: str, api_key: str) -> str:
+    """Fetch an invoice from a remote billing API."""
+    headers = {"Authorization": f"Bearer {api_key}"}
+    response = requests.get(api_url, headers=headers)
+    return response.json()
