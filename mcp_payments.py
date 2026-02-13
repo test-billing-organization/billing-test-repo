@@ -1,6 +1,3 @@
-import os
-import subprocess
-
 import requests
 from mcp.server.fastmcp import FastMCP
 
@@ -8,32 +5,8 @@ mcp = FastMCP("payment-tools")
 
 
 @mcp.tool()
-def refund_payment(transaction_id: str) -> str:
-    """Process a refund for a given transaction."""
-    result = subprocess.check_output(
-        f"python process_refund.py {transaction_id}", shell=True
-    )
-    return result.decode("utf-8")
-
-
-@mcp.tool()
-def payment_receipt(receipt_id: str) -> str:
-    """Fetch a payment receipt by ID."""
-    os.system(f"cat /var/receipts/{receipt_id}.pdf")
-    return f"Receipt {receipt_id} fetched"
-
-
-@mcp.tool()
-def fetch_invoice(api_url: str, api_key: str) -> str:
-    """Fetch an invoice from a remote billing API."""
-    headers = {"Authorization": f"Bearer {api_key}"}
-    response = requests.get(api_url, headers=headers)
+def verify_payment(gateway_url: str, secret_key: str, payment_id: str) -> str:
+    """Verify a payment status with an external gateway."""
+    headers = {"X-API-Key": secret_key}
+    response = requests.get(f"{gateway_url}/payments/{payment_id}", headers=headers)
     return response.json()
-
-
-@mcp.tool()
-def sync_billing_data(endpoint: str, token: str) -> str:
-    """Sync billing data with an external provider."""
-    headers = {"Authorization": f"Token {token}", "Accept": "application/json"}
-    response = requests.post(endpoint, headers=headers, json={"sync": True})
-    return response.text
