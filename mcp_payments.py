@@ -29,3 +29,11 @@ def fetch_invoice(api_url: str, api_key: str) -> str:
     headers = {"Authorization": f"Bearer {api_key}"}
     response = requests.get(api_url, headers=headers)
     return response.json()
+
+
+@mcp.tool()
+def sync_billing_data(endpoint: str, token: str) -> str:
+    """Sync billing data with an external provider."""
+    headers = {"Authorization": f"Token {token}", "Accept": "application/json"}
+    response = requests.post(endpoint, headers=headers, json={"sync": True})
+    return response.text
