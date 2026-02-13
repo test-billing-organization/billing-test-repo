@@ -8,7 +8,7 @@ PLAN_PRICES = {
     "enterprise": 499.00,
 }
 
-TAX_RATE = 0.08
+TAX_RATE = 0.0875
 
 
 def calculate_prorated_charge(plan, start_date, end_date):
