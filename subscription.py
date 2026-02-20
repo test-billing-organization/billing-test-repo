@@ -14,8 +14,18 @@ class Subscription:
         """Check if the free trial period has ended."""
         return datetime.now() > self.trial_end
 
-    def downgrade(self, new_plan):
-        """Downgrade to a lower plan."""
+    def downgrade(self, new_plan, requesting_user_id):
+        """Downgrade to a lower plan.
+
+        Args:
+            new_plan: The plan to downgrade to.
+            requesting_user_id: The user ID of the person requesting the downgrade.
+
+        Raises:
+            PermissionError: If the requesting user doesn't own this subscription.
+        """
+        if requesting_user_id != self.user_id:
+            raise PermissionError("User is not authorized to modify this subscription")
         self.plan = new_plan
         self.is_active = True
 
