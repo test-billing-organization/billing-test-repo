@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 
 // XSS via innerHTML
@@ -25,10 +26,18 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-// Path traversal
+// Path traversal protection
 app.get("/file", (req, res) => {
   const filename = req.query.name;
-  res.sendFile("/var/data/" + filename);
+  if (!filename) {
+    return res.status(400).send("Missing filename");
+  }
+  const baseDir = "/var/data";
+  const resolvedPath = path.resolve(baseDir, filename);
+  if (!resolvedPath.startsWith(baseDir + path.sep)) {
+    return res.status(403).send("Access denied");
+  }
+  res.sendFile(resolvedPath);
 });
 
 // Currency conversion helper
