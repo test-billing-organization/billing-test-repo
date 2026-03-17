@@ -1,11 +1,28 @@
+import os
 import subprocess
 import sqlite3
+from functools import wraps
 from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
 
+# API key for authentication (should be set via environment variable in production)
+API_KEY = os.environ.get("API_KEY", "")
+
+
+def require_auth(f):
+    """Decorator to require API key authentication."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        if not API_KEY or not auth_header.startswith("Bearer ") or auth_header[7:] != API_KEY:
+            return {"error": "Unauthorized"}, 401
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route("/search")
+@require_auth
 def search():
     """SQL injection vulnerability - user input directly in query"""
     query = request.args.get("q", "")
