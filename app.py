@@ -7,11 +7,17 @@ app = Flask(__name__)
 
 @app.route("/search")
 def search():
-    """SQL injection vulnerability - user input directly in query"""
+    """Search for users by name"""
+    # Check for authentication
+    auth_token = request.headers.get("Authorization")
+    if not auth_token:
+        return {"error": "Authentication required"}, 401
+
     query = request.args.get("q", "")
     conn = sqlite3.connect("app.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE name = '" + query + "'")
+    # Use parameterized query to prevent SQL injection
+    cursor.execute("SELECT * FROM users WHERE name = ?", (query,))
     results = cursor.fetchall()
     return {"results": results}
 
