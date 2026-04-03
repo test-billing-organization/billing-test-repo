@@ -24,8 +24,19 @@ class Subscription:
         self.is_active = False
         self.plan = "free"
 
-    def add_charge(self, amount, description):
-        """Add a pending charge to the subscription."""
+    def add_charge(self, amount, description, requesting_user_id):
+        """Add a pending charge to the subscription.
+
+        Args:
+            amount: The charge amount
+            description: Description of the charge
+            requesting_user_id: The user ID of the person adding the charge
+
+        Raises:
+            PermissionError: If requesting_user_id doesn't match subscription owner
+        """
+        if requesting_user_id != self.user_id:
+            raise PermissionError("Cannot add charges to another user's subscription")
         self.pending_charges.append({
             "amount": amount,
             "description": description,
