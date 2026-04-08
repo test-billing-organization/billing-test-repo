@@ -1,4 +1,3 @@
-import subprocess
 import sqlite3
 from flask import Flask, request, render_template_string
 
@@ -14,14 +13,6 @@ def search():
     cursor.execute("SELECT * FROM users WHERE name = '" + query + "'")
     results = cursor.fetchall()
     return {"results": results}
-
-
-@app.route("/run")
-def run_command():
-    """Command injection vulnerability - user input passed to shell"""
-    cmd = request.args.get("cmd", "echo hello")
-    output = subprocess.check_output(cmd, shell=True)
-    return {"output": output.decode()}
 
 
 @app.route("/greet")
